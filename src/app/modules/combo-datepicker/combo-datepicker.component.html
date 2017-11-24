@@ -1,0 +1,28 @@
+<select *ngIf="this.showDays"
+        [(ngModel)]="selectedDate"
+        (change)="onChange($event)">
+  <option *ngFor="let date of _dates"
+          [value]="date.value"
+          [disabled]="date.disabled">
+    {{ date.name }}
+  </option>
+</select>
+
+<select [(ngModel)]="selectedMonth"
+        (change)="onChange($event)">
+  <option *ngFor="let month of _months"
+          [value]="month.value"
+          [disabled]="month.disabled">
+    {{ month.name }}
+  </option>
+</select>
+
+<select [(ngModel)]="selectedYear"
+        (change)="onChange($event)">
+  <option *ngFor="let year of _years"
+          [value]="year.value"
+          [disabled]="year.disabled">
+    {{ year.name }}
+  </option>
+</select>
+

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 
 import { AppComponent } from './app.component';
+import { ComboDatepickerModule } from './modules/combo-datepicker/combo-datepicker.module';
 
 
 @NgModule({
@@ -10,7 +11,8 @@ import { AppComponent } from './app.component';
     AppComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    ComboDatepickerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
