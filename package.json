@@ -2,6 +2,11 @@
   "name": "ngx-combo-datepicker",
   "version": "0.0.0",
   "license": "MIT",
+  "description": "Angular 2+ Combo Datepicker",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/katafractari/ngx-combo-datepicker.git"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
