@@ -16,6 +16,11 @@ export const DEFAULT_VALIDATOR: any = {
   multi: true,
 };
 
+interface Option {
+  value: number;
+  name: string;
+}
+
 @Component({
   selector: 'ngx-combo-datepicker',
   templateUrl: './combo-datepicker.component.html',
@@ -26,7 +31,7 @@ export const DEFAULT_VALIDATOR: any = {
 })
 export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValueAccessor, Validator {
   @Input() ngModel;
-  @Input() ngDate;
+  @Input() date;
   @Input() minDate;
   @Input() maxDate;
   @Input() months;
@@ -40,18 +45,19 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   @Input() ngRequired;
   @Input() showDays = true;
 
-  private selectedDate: string = '';
-  private selectedMonth: string = '';
-  private selectedYear: string = '';
+  _months: any;
+  _years: any;
+  _dates: any;
+
+  private selectedDate: number;
+  private selectedMonth: number;
+  private selectedYear: number;
 
   private monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   private _minDate: Date;
   private _maxDate: Date;
   private placeHolders: any;
-  _months: any;
-  _years: any;
-  _dates: any;
 
   ngOnInit() {
     // Initialize model.
@@ -63,7 +69,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     this.ngAttrsYear = this.parseJsonPlus(this.ngAttrsYear);
 
     // Verify if initial date was defined.
-    let initDate = this.parseDate(this.ngDate, this.ngTimezone);
+    const initDate = this.parseDate(this.date, this.ngTimezone);
     if (initDate != null) {
       this.ngModel = initDate;
     }
@@ -111,14 +117,15 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     this.updateMonthList('');
     this.updateYearList('');
     this.updateDateList('', '');
+    this.writeValue(this.ngModel);
   }
 
   onChange(event) {
     let res = null;
 
     // Check that the three combo boxes have values.
-    if (this.selectedDate != null && this.selectedDate !== '' && !isNaN(parseInt(this.selectedMonth, 10)) &&
-      this.selectedYear != null && this.selectedYear !== '') {
+    if (this.selectedDate != null && this.selectedDate && !isNaN(this.selectedMonth) &&
+      this.selectedYear != null && this.selectedYear) {
       const maxDay = this.getMaxDate(this.selectedMonth + 1, this.selectedYear);
 
       let hours = 0;
@@ -132,20 +139,19 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
         milliseconds = this.ngModel.getMilliseconds();
       }
 
-      res = new Date(parseInt(this.selectedYear, 10), parseInt(this.selectedMonth, 10),
-        parseInt(this.selectedDate, 10) > maxDay ? maxDay : parseInt(this.selectedDate, 10), hours, minutes, seconds,
-        milliseconds);
+      res = new Date(this.selectedYear, this.selectedMonth, this.selectedDate > maxDay ? maxDay : this.selectedDate,
+        hours, minutes, seconds, milliseconds);
     }
 
     // Disable placeholders after selecting a value.
     if (this.placeHolders) {
-      if (this.selectedYear !== '') {
+      if (this.selectedYear) {
         this.placeHolders[0].disabled = true;
       }
-      if (this.selectedMonth !== '') {
+      if (this.selectedMonth) {
         this.placeHolders[1].disabled = true;
       }
-      if (this.selectedDate !== '') {
+      if (this.selectedDate) {
         this.placeHolders[2].disabled = true;
       }
     }
@@ -166,9 +172,9 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
       this.selectedMonth = value.getMonth();
       this.selectedYear = value.getFullYear();
     } else {
-      this.selectedDate = this.showDays ? '' : '1';
-      this.selectedMonth = '';
-      this.selectedYear = '';
+      this.selectedDate = this.showDays ? null : 1;
+      this.selectedMonth = null;
+      this.selectedYear = null;
 
       if (this.placeHolders) {
         this.placeHolders[0].disabled = false;
@@ -209,8 +215,8 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     year = this.parseIntStrict(year);
 
     // Some months can not be choosed if the year matchs with the year of the minimum or maximum dates.
-    let start = year !== null && year === this._minDate.getFullYear() ? this._minDate.getMonth() : 0;
-    let end = year !== null && year === this._maxDate.getFullYear() ? this._maxDate.getMonth() : 11;
+    const start = year !== null && year === this._minDate.getFullYear() ? this._minDate.getMonth() : 0;
+    const end = year !== null && year === this._maxDate.getFullYear() ? this._maxDate.getMonth() : 11;
 
     // Generate list.
     this._months = [];
@@ -228,10 +234,11 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     month = this.parseIntStrict(month);
 
     this._years = [];
-    let isReverse = typeof this.yearOrder === 'string' && this.yearOrder.indexOf('des') === 0;
+    const isReverse = typeof this.yearOrder === 'string' && this.yearOrder.indexOf('des') === 0;
+    console.log(month, this._minDate.getMonth())
     for (let i = this._minDate.getFullYear(); i <= this._maxDate.getFullYear(); i++) {
-      let now = new Date();
-      if (now.getFullYear() === i && month !== null &&
+      const now = new Date();
+      if (month + 1 < this._minDate.getMonth() && now.getFullYear() === i && month !== null &&
         (isReverse && month > now.getMonth() || !isReverse && month < now.getMonth())) {
         continue;
       }
@@ -286,7 +293,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     if (this.placeholder !== undefined && this.placeholder !== null &&
       (typeof this.placeholder === 'string' || Array.isArray(this.placeholder))) {
 
-      let holders = typeof this.placeholder === 'string' ?
+      const holders = typeof this.placeholder === 'string' ?
         this.placeholder.split(',') : this.placeholder;
       if (holders.length === 3) {
         this.placeHolders = [];
@@ -321,7 +328,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   }
 
   // Define function for adjust timezone.
-  adjustTimezone (myDate, myTimezone) {
+  adjustTimezone(myDate, myTimezone) {
     const offset = isNaN(myTimezone) ? new Date().getTimezoneOffset() : parseFloat(myTimezone) * 60;
     return new Date(myDate.getTime() + offset * 60 * 1000);
   }
@@ -355,4 +362,3 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     return res;
   }
 }
-
