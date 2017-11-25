@@ -32,9 +32,9 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   @Input() maxDate;
   @Input() months;
   @Input() order;
-  @Input() ngAttrsDate;
-  @Input() ngAttrsMonth;
-  @Input() ngAttrsYear;
+  @Input() attrsDate: object = {};
+  @Input() attrsMonth: object = {};
+  @Input() attrsYear: object = {};
   @Input() yearOrder;
   @Input() ngTimezone;
   @Input() placeholder;
@@ -58,9 +58,9 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     this.ngModel = this.parseDate(this.ngModel, this.ngTimezone);
 
     // Initialize attributes variables.
-    this.ngAttrsDate = this.parseJsonPlus(this.ngAttrsDate);
-    this.ngAttrsMonth = this.parseJsonPlus(this.ngAttrsMonth);
-    this.ngAttrsYear = this.parseJsonPlus(this.ngAttrsYear);
+    this.selects.d.attrs = this.attrsDate;
+    this.selects.m.attrs = this.attrsMonth;
+    this.selects.y.attrs = this.attrsYear;
 
     // Verify if initial date was defined.
     const initDate = this.parseDate(this.date, this.ngTimezone);
@@ -327,18 +327,6 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   adjustTimezone(myDate, myTimezone) {
     const offset = isNaN(myTimezone) ? new Date().getTimezoneOffset() : parseFloat(myTimezone) * 60;
     return new Date(myDate.getTime() + offset * 60 * 1000);
-  }
-
-  // Function to parse a JSON object.
-  parseJsonPlus(jsonObj) {
-    let res = null;
-    if (jsonObj != null) {
-      try { res = JSON.parse(jsonObj); }catch (ex) {}
-      if (res == null) {
-        try { res = JSON.parse(jsonObj.replace(/'/g, '"')); }catch (ex) {}
-      }
-    }
-    return res;
   }
 
   // Function to parse an string returning either a number or 'null' (instead of NaN).

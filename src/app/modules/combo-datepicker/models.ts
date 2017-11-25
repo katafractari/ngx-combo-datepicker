@@ -7,6 +7,7 @@ export interface Select {
   value?: number;
   options?: Option[];
   show?: boolean;
+  attrs?: object;
 }
 
 export interface Selects {

@@ -1,7 +1,8 @@
 <ng-container *ngFor="let type of order">
   <select *ngIf="selects[type].show"
           [(ngModel)]="selects[type].value"
-          (change)="onChange($event)">
+          (change)="onChange($event)"
+          customAttrs [attrs]="selects[type].attrs">
     <option *ngFor="let option of selects[type].options"
             [ngValue]="option.value"
             [disabled]="option.disabled">
