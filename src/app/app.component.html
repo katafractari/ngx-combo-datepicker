@@ -6,7 +6,22 @@
     <ngx-combo-datepicker [date]="'2017-11-24'"></ngx-combo-datepicker>
   </div>
   <div>
-    <ngx-combo-datepicker [date]="date"></ngx-combo-datepicker>
+    <ngx-combo-datepicker [date]="initialDate"></ngx-combo-datepicker>
+  </div>
+  <div>
+    <ngx-combo-datepicker [date]="'2001-01-01'"
+                          order="ymd">
+    </ngx-combo-datepicker>
+  </div>
+  <div>
+    <ngx-combo-datepicker [date]="'2001-01-01'"
+                          order="mdy">
+    </ngx-combo-datepicker>
+  </div>
+  <div>
+    <ngx-combo-datepicker [date]="'2001-01-01'"
+                          order="dmy">
+    </ngx-combo-datepicker>
   </div>
 </form>
 

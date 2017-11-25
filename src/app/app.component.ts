@@ -9,7 +9,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 export class AppComponent implements OnInit {
   form: FormGroup;
 
-  date = new Date(new Date('2017-10-05'));
+  initialDate = new Date(new Date('2017-10-05'));
 
   constructor(private formBuilder: FormBuilder) {}
 

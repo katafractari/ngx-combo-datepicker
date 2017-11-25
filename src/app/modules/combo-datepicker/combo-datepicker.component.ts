@@ -3,6 +3,7 @@ import {
   AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors,
   Validator
 } from '@angular/forms';
+import { Selects } from './models';
 
 export const DEFAULT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -15,11 +16,6 @@ export const DEFAULT_VALIDATOR: any = {
   useExisting: forwardRef(() => ComboDatepickerComponent),
   multi: true,
 };
-
-interface Option {
-  value: number;
-  name: string;
-}
 
 @Component({
   selector: 'ngx-combo-datepicker',
@@ -35,7 +31,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   @Input() minDate;
   @Input() maxDate;
   @Input() months;
-  @Input() ngOrder;
+  @Input() order;
   @Input() ngAttrsDate;
   @Input() ngAttrsMonth;
   @Input() ngAttrsYear;
@@ -45,13 +41,11 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   @Input() ngRequired;
   @Input() showDays = true;
 
-  _months: any;
-  _years: any;
-  _dates: any;
-
-  private selectedDate: number;
-  private selectedMonth: number;
-  private selectedYear: number;
+  private selects: Selects = {
+    d: { show: true },
+    m: { show: true },
+    y: { show: true }
+  };
 
   private monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -75,16 +69,16 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     }
 
     // Initialize order.
-    if (typeof this.ngOrder !== 'string') {
-      this.ngOrder = 'dmy';
+    if (typeof this.order !== 'string') {
+      this.order = 'dmy'.split('');
     } else {
-      this.ngOrder = this.ngOrder.toLowerCase();
+      this.order = this.order.toLowerCase().split('');
     }
 
     // Initialize minimal and maximum values.
     this._minDate = this.parseDate(this.minDate, this.ngTimezone);
     if (this.minDate == null) {
-      let now = new Date();
+      const now = new Date();
       this._minDate = new Date(now.getFullYear() - 100, now.getMonth(), now.getDate(),
         now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
     }
@@ -103,7 +97,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
 
     if (this.months !== undefined && this.months !== null) {
       if (typeof this.months === 'string') {
-        let months = this.months.split(',');
+        const months = this.months.split(',');
         if (months.length === 12) {
           this.monthNames = months;
         }
@@ -124,9 +118,9 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     let res = null;
 
     // Check that the three combo boxes have values.
-    if (this.selectedDate != null && this.selectedDate && !isNaN(this.selectedMonth) &&
-      this.selectedYear != null && this.selectedYear) {
-      const maxDay = this.getMaxDate(this.selectedMonth + 1, this.selectedYear);
+    if (this.selects.d.value && !isNaN(this.selects.m.value) &&
+      this.selects.y.value != null && this.selects.y.value) {
+      const maxDay = this.getMaxDate(this.selects.m.value + 1, this.selects.m.value);
 
       let hours = 0;
       let minutes = 0;
@@ -139,27 +133,27 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
         milliseconds = this.ngModel.getMilliseconds();
       }
 
-      res = new Date(this.selectedYear, this.selectedMonth, this.selectedDate > maxDay ? maxDay : this.selectedDate,
-        hours, minutes, seconds, milliseconds);
+      res = new Date(this.selects.y.value, this.selects.m.value,
+        this.selects.d.value > maxDay ? maxDay : this.selects.d.value, hours, minutes, seconds, milliseconds);
     }
 
     // Disable placeholders after selecting a value.
     if (this.placeHolders) {
-      if (this.selectedYear) {
+      if (this.selects.y.value) {
         this.placeHolders[0].disabled = true;
       }
-      if (this.selectedMonth) {
+      if (this.selects.d.value) {
         this.placeHolders[1].disabled = true;
       }
-      if (this.selectedDate) {
+      if (this.selects.d.value) {
         this.placeHolders[2].disabled = true;
       }
     }
 
     // Hide or show days and months according to the min and max dates.
-    this.updateMonthList(this.selectedYear);
-    this.updateYearList(this.selectedMonth);
-    this.updateDateList(this.selectedMonth, this.selectedYear);
+    this.updateMonthList(this.selects.y.value);
+    this.updateYearList(this.selects.d.value);
+    this.updateDateList(this.selects.d.value, this.selects.y.value);
 
     this.propagateChange(res);
   }
@@ -168,13 +162,13 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
 
   writeValue(value: any): void {
     if (value) {
-      this.selectedDate = value.getDate();
-      this.selectedMonth = value.getMonth();
-      this.selectedYear = value.getFullYear();
+      this.selects.d.value = value.getDate();
+      this.selects.m.value = value.getMonth();
+      this.selects.y.value = value.getFullYear();
     } else {
-      this.selectedDate = this.showDays ? null : 1;
-      this.selectedMonth = null;
-      this.selectedYear = null;
+      this.selects.d.value = this.showDays ? null : 1;
+      this.selects.m.value = null;
+      this.selects.y.value = null;
 
       if (this.placeHolders) {
         this.placeHolders[0].disabled = false;
@@ -183,9 +177,9 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
       }
     }
 
-    this.updateMonthList(this.selectedYear);
-    this.updateYearList(this.selectedMonth);
-    this.updateDateList(this.selectedMonth, this.selectedYear);
+    this.updateMonthList(this.selects.y.value);
+    this.updateYearList(this.selects.m.value);
+    this.updateDateList(this.selects.m.value, this.selects.y.value);
   }
 
   registerOnChange(fn) {
@@ -196,16 +190,16 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   }
 
   validate(c: AbstractControl): ValidationErrors | any {
-    return this.selectedDate && this.selectedMonth && this.selectedYear ?
+    return this.selects.d.value && this.selects.d.value && this.selects.y.value ?
       null : { required: true };
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.placeholder && !changes.placeholder.isFirstChange()) {
       this.updatePlaceholders();
-      this.updateMonthList(this.selectedYear);
-      this.updateYearList(this.selectedMonth);
-      this.updateDateList(this.selectedMonth, this.selectedYear);
+      this.updateMonthList(this.selects.y.value);
+      this.updateYearList(this.selects.d.value);
+      this.updateDateList(this.selects.d.value, this.selects.y.value);
     }
   }
 
@@ -219,12 +213,12 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     const end = year !== null && year === this._maxDate.getFullYear() ? this._maxDate.getMonth() : 11;
 
     // Generate list.
-    this._months = [];
+    this.selects.m.options = [];
     if (this.placeHolders) {
-      this._months.push(this.placeHolders[1]);
+      this.selects.m.options.push(this.placeHolders[1]);
     }
     for (let i = start; i <= end; i++) {
-      this._months.push({value: i, name: this.monthNames[i]});
+      this.selects.m.options.push({value: i, name: this.monthNames[i]});
     }
   }
 
@@ -233,9 +227,8 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     // Parse parameter.
     month = this.parseIntStrict(month);
 
-    this._years = [];
+    this.selects.y.options = [];
     const isReverse = typeof this.yearOrder === 'string' && this.yearOrder.indexOf('des') === 0;
-    console.log(month, this._minDate.getMonth())
     for (let i = this._minDate.getFullYear(); i <= this._maxDate.getFullYear(); i++) {
       const now = new Date();
       if (month + 1 < this._minDate.getMonth() && now.getFullYear() === i && month !== null &&
@@ -243,17 +236,17 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
         continue;
       }
 
-      this._years.push({value: i, name: i});
+      this.selects.y.options.push({value: i, name: i});
     }
 
     // Verify if the order of the years must be reversed.
     if (isReverse) {
-      this._years.reverse();
+      this.selects.y.options.reverse();
     }
 
     // Prepend the years placeholder
     if (this.placeHolders) {
-      this._years.unshift(this.placeHolders[0]);
+      this.selects.y.options.unshift(this.placeHolders[0]);
     }
   }
 
@@ -278,14 +271,17 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     }
 
     // Generate list.
-    this._dates = [];
+    this.selects.d.options = [];
     if (this.placeHolders) {
-      this._dates.push(this.placeHolders[2]);
+      this.selects.d.options.push(this.placeHolders[2]);
     }
     for (let i = start; i <= end; i++) {
-      this._dates.push({value: i, name: i});
+      this.selects.d.options.push({
+        value: i,
+        name: i
+      });
     }
-  };
+  }
 
   // Initialize place holders.
   updatePlaceholders() {
@@ -297,7 +293,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
         this.placeholder.split(',') : this.placeholder;
       if (holders.length === 3) {
         this.placeHolders = [];
-        for (let h of holders) {
+        for (const h of holders) {
           this.placeHolders.push({value: '', name: h, disabled: false});
         }
       }
@@ -337,15 +333,17 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   parseJsonPlus(jsonObj) {
     let res = null;
     if (jsonObj != null) {
-      try { res = JSON.parse(jsonObj); }catch(ex) {}
-      if (res == null) try { res = JSON.parse(jsonObj.replace(/'/g, '"')); }catch (ex) {}
+      try { res = JSON.parse(jsonObj); }catch (ex) {}
+      if (res == null) {
+        try { res = JSON.parse(jsonObj.replace(/'/g, '"')); }catch (ex) {}
+      }
     }
     return res;
   }
 
   // Function to parse an string returning either a number or 'null' (instead of NaN).
   parseIntStrict(num) {
-    return (num !== null && num !== '' && parseInt(num) !== NaN) ? parseInt(num) : null;
+    return (num !== null && num !== '' && isNaN(parseInt(num, 10))) ? parseInt(num, 10) : null;
   }
 
   // Define fuction for getting the maximum date for a month.
