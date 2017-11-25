@@ -39,6 +39,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   @Input() timezone;
   @Input() placeholder;
   @Input() ngRequired;
+  @Input() disabled: boolean;
   @Input() showDays = true;
 
   private selects: Selects = {
