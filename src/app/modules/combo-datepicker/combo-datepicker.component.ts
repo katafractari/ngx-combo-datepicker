@@ -125,7 +125,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     this.writeValue(this.ngModel);
   }
 
-  onChange(event) {
+  onChange() {
     let res = null;
 
     // Check that the three combo boxes have values.

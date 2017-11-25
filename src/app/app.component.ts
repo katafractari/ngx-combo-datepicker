@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -13,12 +13,16 @@ export class AppComponent implements OnInit {
 
   customMonths = 'Janvier,Février,Mars,Avril,Mai,Juin,Juillet,Août,Septembre,Octobre,Novembre,Décembre';
 
+  value: string;
+
   constructor(private formBuilder: FormBuilder) {}
 
   ngOnInit() {
     this.form = this.formBuilder.group({
-      basic: new FormControl(),
-      initialValue: new FormControl()
+      control: new FormControl(null, [Validators.required])
     });
+
+    this.form.get('control').valueChanges
+      .subscribe((value) => this.value = value);
   }
 }

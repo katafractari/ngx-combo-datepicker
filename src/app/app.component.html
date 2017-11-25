@@ -1,6 +1,6 @@
 <form novalidate [formGroup]="form">
   <div>
-    <ngx-combo-datepicker formControlName="basic"></ngx-combo-datepicker>
+    <ngx-combo-datepicker></ngx-combo-datepicker>
   </div>
   <div>
     <ngx-combo-datepicker [date]="'2017-11-24'"></ngx-combo-datepicker>
@@ -63,6 +63,24 @@
   </div>
   <div>
     <ngx-combo-datepicker [disabled]="[false, true, false]"></ngx-combo-datepicker>
+  </div>
+  <div>
+    <ngx-combo-datepicker formControlName="control"></ngx-combo-datepicker>
+    <div>
+      valid: {{ form.get('control').valid }}
+    </div>
+    <div>
+      pristine: {{ form.get('control').pristine }}
+    </div>
+    <div>
+      dirty: {{ form.get('control').dirty }}
+    </div>
+    <div>
+      errors.required: {{ form.get('control').hasError() && form.get('control').errors.required }}
+    </div>
+    <div>
+      value: {{ value }}
+    </div>
   </div>
 </form>
 
