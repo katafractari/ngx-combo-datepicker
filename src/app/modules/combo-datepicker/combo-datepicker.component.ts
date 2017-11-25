@@ -3,7 +3,7 @@ import {
   AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors,
   Validator
 } from '@angular/forms';
-import { Selects } from './models';
+import { Option, Selects } from './models';
 
 export const DEFAULT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -142,7 +142,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
       if (this.selects.y.value) {
         this.placeHolders[0].disabled = true;
       }
-      if (this.selects.d.value) {
+      if (this.selects.m.value) {
         this.placeHolders[1].disabled = true;
       }
       if (this.selects.d.value) {
@@ -294,7 +294,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
       if (holders.length === 3) {
         this.placeHolders = [];
         for (const h of holders) {
-          this.placeHolders.push({value: '', name: h, disabled: false});
+          this.placeHolders.push({value: null, name: h, disabled: false});
         }
       }
     }
