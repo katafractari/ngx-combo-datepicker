@@ -11,6 +11,8 @@ export class AppComponent implements OnInit {
 
   initialDate = new Date(new Date('2017-10-05'));
 
+  customMonths = 'Janvier,Février,Mars,Avril,Mai,Juin,Juillet,Août,Septembre,Octobre,Novembre,Décembre';
+
   constructor(private formBuilder: FormBuilder) {}
 
   ngOnInit() {

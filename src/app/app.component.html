@@ -23,5 +23,20 @@
                           order="dmy">
     </ngx-combo-datepicker>
   </div>
+  <div>
+    <ngx-combo-datepicker minDate="1800-01-01"
+                          maxDate="1900-12-31">
+    </ngx-combo-datepicker>
+  </div>
+  <div>
+    <ngx-combo-datepicker [date]="'2001-01-01'"
+      months="Enero,Febrero,Marzo,Abril,Mayo,Junio,Julio,Agosto,Septiembre,Octubre,Noviembre,Diciembre">
+    </ngx-combo-datepicker>
+  </div>
+  <div>
+    <ngx-combo-datepicker [date]="'2001-01-01'"
+                          [months]="customMonths">
+    </ngx-combo-datepicker>
+  </div>
 </form>
 
