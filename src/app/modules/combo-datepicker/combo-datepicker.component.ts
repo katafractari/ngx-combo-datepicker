@@ -36,7 +36,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   @Input() attrsMonth: object = {};
   @Input() attrsYear: object = {};
   @Input() yearOrder;
-  @Input() ngTimezone;
+  @Input() timezone;
   @Input() placeholder;
   @Input() ngRequired;
   @Input() showDays = true;
@@ -55,7 +55,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
 
   ngOnInit() {
     // Initialize model.
-    this.ngModel = this.parseDate(this.ngModel, this.ngTimezone);
+    this.ngModel = this.parseDate(this.ngModel, this.timezone);
 
     // Initialize attributes variables.
     this.selects.d.attrs = this.attrsDate;
@@ -63,7 +63,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     this.selects.y.attrs = this.attrsYear;
 
     // Verify if initial date was defined.
-    const initDate = this.parseDate(this.date, this.ngTimezone);
+    const initDate = this.parseDate(this.date, this.timezone);
     if (initDate != null) {
       this.ngModel = initDate;
     }
@@ -76,13 +76,13 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     }
 
     // Initialize minimal and maximum values.
-    this._minDate = this.parseDate(this.minDate, this.ngTimezone);
+    this._minDate = this.parseDate(this.minDate, this.timezone);
     if (this.minDate == null) {
       const now = new Date();
       this._minDate = new Date(now.getFullYear() - 100, now.getMonth(), now.getDate(),
         now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
     }
-    this._maxDate = this.parseDate(this.maxDate, this.ngTimezone);
+    this._maxDate = this.parseDate(this.maxDate, this.timezone);
     if (this._maxDate == null) {
       this._maxDate = new Date();
     }
