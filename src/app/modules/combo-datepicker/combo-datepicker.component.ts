@@ -1,9 +1,14 @@
 import { Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import {
-  AbstractControl, ControlValueAccessor, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors,
+  AbstractControl,
+  ControlValueAccessor,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  ValidationErrors,
   Validator
 } from '@angular/forms';
-import { Option, Selects } from './models';
+import { Selects } from './models';
+import DateUtils from './date-utils';
 
 export const DEFAULT_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -56,7 +61,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
 
   ngOnInit() {
     // Initialize model.
-    this.ngModel = this.parseDate(this.ngModel, this.timezone);
+    this.ngModel = DateUtils.parseDate(this.ngModel, this.timezone);
 
     // Initialize attributes variables.
     this.selects.d.attrs = this.attrsDate;
@@ -74,7 +79,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     }
 
     // Verify if initial date was defined.
-    const initDate = this.parseDate(this.date, this.timezone);
+    const initDate = DateUtils.parseDate(this.date, this.timezone);
     if (initDate != null) {
       this.ngModel = initDate;
     }
@@ -87,13 +92,13 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     }
 
     // Initialize minimal and maximum values.
-    this._minDate = this.parseDate(this.minDate, this.timezone);
+    this._minDate = DateUtils.parseDate(this.minDate, this.timezone);
     if (this.minDate == null) {
       const now = new Date();
       this._minDate = new Date(now.getFullYear() - 100, now.getMonth(), now.getDate(),
         now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
     }
-    this._maxDate = this.parseDate(this.maxDate, this.timezone);
+    this._maxDate = DateUtils.parseDate(this.maxDate, this.timezone);
     if (this._maxDate == null) {
       this._maxDate = new Date();
     }
@@ -131,7 +136,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     // Check that the three combo boxes have values.
     if (this.selects.d.value && !isNaN(this.selects.m.value) &&
       this.selects.y.value != null && this.selects.y.value) {
-      const maxDay = this.getMaxDate(this.selects.m.value + 1, this.selects.m.value);
+      const maxDay = DateUtils.getMaxDate(this.selects.m.value + 1, this.selects.m.value);
 
       let hours = 0;
       let minutes = 0;
@@ -217,9 +222,9 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   // Update list of months.
   updateMonthList(year) {
     // Parse parameter.
-    year = this.parseIntStrict(year);
+    year = DateUtils.parseIntStrict(year);
 
-    // Some months can not be choosed if the year matchs with the year of the minimum or maximum dates.
+    // Some months can not be chosen if the year matches with the year of the minimum or maximum dates.
     const start = year !== null && year === this._minDate.getFullYear() ? this._minDate.getMonth() : 0;
     const end = year !== null && year === this._maxDate.getFullYear() ? this._maxDate.getMonth() : 11;
 
@@ -236,7 +241,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   // Update list of years.
   updateYearList(month?) {
     // Parse parameter.
-    month = this.parseIntStrict(month);
+    month = DateUtils.parseIntStrict(month);
 
     this.selects.y.options = [];
     const isReverse = typeof this.yearOrder === 'string' && this.yearOrder.indexOf('des') === 0;
@@ -264,18 +269,18 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   // Initialize list of days.
   updateDateList(month, year) {
     // Parse parameters.
-    month = this.parseIntStrict(month);
-    year = this.parseIntStrict(year);
+    month = DateUtils.parseIntStrict(month);
+    year = DateUtils.parseIntStrict(year);
 
-    // Start date is 1, unless the selected month and year matchs the minimum date.
+    // Start date is 1, unless the selected month and year matches the minimum date.
     let start = 1;
     if (month !== null && month === this._minDate.getMonth() &&
       year !== null && year === this._minDate.getFullYear()) {
       start = this._minDate.getDate();
     }
 
-    // End date is 30 or 31 (28 or 29 in February), unless the selected month and year matchs the maximum date.
-    let end = this.getMaxDate(month !== null ? (month + 1) : null, year);
+    // End date is 30 or 31 (28 or 29 in February), unless the selected month and year matches the maximum date.
+    let end = DateUtils.getMaxDate(month !== null ? (month + 1) : null, year);
     if (month !== null && month === this._maxDate.getMonth() &&
       year !== null && year === this._maxDate.getFullYear()) {
       end = this._maxDate.getDate();
@@ -309,53 +314,5 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
         }
       }
     }
-  }
-
-  // Define function for parse dates.
-  parseDate(myDate, myTimezone) {
-    let res = null;
-    if (myDate !== undefined && myDate !== null) {
-      if (myDate instanceof Date) {
-        res = myDate;
-      } else {
-        if (typeof myDate === 'number' || typeof myDate === 'string') {
-          // Parse date.
-          if (typeof myDate === 'number') {
-            res = new Date(parseInt(myDate.toString(), 10));
-          } else {
-            res = new Date(myDate);
-          }
-
-          // Adjust timezone.
-          res = this.adjustTimezone(res, myTimezone);
-        }
-      }
-    }
-    return res;
-  }
-
-  // Define function for adjust timezone.
-  adjustTimezone(myDate, myTimezone) {
-    const offset = isNaN(myTimezone) ? new Date().getTimezoneOffset() : parseFloat(myTimezone) * 60;
-    return new Date(myDate.getTime() + offset * 60 * 1000);
-  }
-
-  // Function to parse an string returning either a number or 'null' (instead of NaN).
-  parseIntStrict(num) {
-    return (num !== null && num !== '' && isNaN(parseInt(num, 10))) ? parseInt(num, 10) : null;
-  }
-
-  // Define fuction for getting the maximum date for a month.
-  getMaxDate(month, year) {
-    let res = 31;
-    if (month != null) {
-      if (month === 4 || month === 6 || month === 9 || month === 11) {
-        res = 30;
-      }
-      if (year !== null && month === 2) {
-        res = year % 4 === 0 && year % 100 !== 0 ? 29 : 28;
-      }
-    }
-    return res;
   }
 }
