@@ -39,7 +39,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   @Input() timezone;
   @Input() placeholder;
   @Input() ngRequired;
-  @Input() disabled: boolean;
+  @Input() disabled: any;
   @Input() showDays = true;
 
   private selects: Selects = {
@@ -62,6 +62,16 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     this.selects.d.attrs = this.attrsDate;
     this.selects.m.attrs = this.attrsMonth;
     this.selects.y.attrs = this.attrsYear;
+
+    if (typeof this.disabled === 'boolean') {
+      this.selects.d.disabled = this.disabled;
+      this.selects.m.disabled = this.disabled;
+      this.selects.y.disabled = this.disabled;
+    } else if (this.disabled instanceof Array && this.disabled.length === 3) {
+      this.selects.d.disabled = this.disabled[0];
+      this.selects.m.disabled = this.disabled[1];
+      this.selects.y.disabled = this.disabled[2];
+    }
 
     // Verify if initial date was defined.
     const initDate = this.parseDate(this.date, this.timezone);

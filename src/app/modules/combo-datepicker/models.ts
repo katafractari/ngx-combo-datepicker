@@ -9,6 +9,7 @@ export interface Select {
   options?: Option[];
   show?: boolean;
   attrs?: object;
+  disabled?: boolean;
 }
 
 export interface Selects {
