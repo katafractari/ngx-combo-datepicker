@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ComboDatepickerComponent } from './combo-datepicker.component';
 import { FormsModule } from '@angular/forms';
 import { AttributesDirective } from './custom-attributes.directive';
-import { DateAttributesDirective } from './date-custom-attributes.directive';
 
 @NgModule({
   imports: [
