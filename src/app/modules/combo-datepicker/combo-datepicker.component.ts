@@ -31,6 +31,7 @@ export const DEFAULT_VALIDATOR: any = {
   ]
 })
 export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValueAccessor, Validator {
+  // TODO: handle ngMinModel and ngMaxModel
   @Input() ngModel;
   @Input() date;
   @Input() minDate;
