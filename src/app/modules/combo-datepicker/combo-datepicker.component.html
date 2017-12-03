@@ -1,5 +1,5 @@
 <ng-container *ngFor="let type of order">
-  <select *ngIf="selects[type].show"
+  <select *ngIf="selects[type].visible"
           [(ngModel)]="selects[type].value"
           (change)="onChange($event)"
           [disabled]="selects[type].disabled"

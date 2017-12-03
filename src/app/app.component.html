@@ -14,7 +14,7 @@
     </ngx-combo-datepicker>
   </div>
   <div>
-    <ngx-combo-datepicker [date]="'2001-01-01'"
+    <ngx-combo-datepicker [date]="'2005-01-01'"
                           order="mdy">
     </ngx-combo-datepicker>
   </div>
@@ -63,6 +63,14 @@
   </div>
   <div>
     <ngx-combo-datepicker [disabled]="[false, true, false]"></ngx-combo-datepicker>
+  </div>
+  <div>
+    <ngx-combo-datepicker formControlName="visibleExample"
+                          order="mdy"
+                          [visible]="[false, true, true]"></ngx-combo-datepicker>
+    <div>
+      value: {{ visibleExample }}
+    </div>
   </div>
   <div>
     <ngx-combo-datepicker formControlName="control"></ngx-combo-datepicker>

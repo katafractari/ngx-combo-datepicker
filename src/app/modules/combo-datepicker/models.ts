@@ -7,7 +7,7 @@ export interface Option {
 export interface Select {
   value?: any;
   options?: Option[];
-  show?: boolean;
+  visible?: boolean;
   attrs?: object;
   disabled?: boolean;
 }

@@ -45,12 +45,12 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
   @Input() placeholder;
   @Input() ngRequired;
   @Input() disabled: any;
-  @Input() showDays = true;
+  @Input() visible: any = [ true, true, true ];
 
   private selects: Selects = {
-    d: { show: true },
-    m: { show: true },
-    y: { show: true }
+    d: { visible: true },
+    m: { visible: true },
+    y: { visible: true }
   };
 
   private monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -76,6 +76,16 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
       this.selects.d.disabled = this.disabled[0];
       this.selects.m.disabled = this.disabled[1];
       this.selects.y.disabled = this.disabled[2];
+    }
+
+    if (typeof this.visible === 'boolean') {
+      this.selects.d.visible = this.visible;
+      this.selects.m.visible = this.visible;
+      this.selects.y.visible = this.visible;
+    } else if (this.visible instanceof Array && this.visible.length === 3) {
+      this.selects.d.visible = this.visible[0];
+      this.selects.m.visible = this.visible[1];
+      this.selects.y.visible = this.visible[2];
     }
 
     // Verify if initial date was defined.
@@ -182,9 +192,15 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
       this.selects.m.value = value.getMonth();
       this.selects.y.value = value.getFullYear();
     } else {
-      this.selects.d.value = this.showDays ? null : 1;
-      this.selects.m.value = null;
-      this.selects.y.value = null;
+      if (typeof this.visible === 'boolean') {
+        this.selects.d.value = this.visible ? null : 1;
+        this.selects.m.value = this.visible ? null : 0;
+        this.selects.y.value = this.visible ? null : new Date().getFullYear();
+      } else if (this.visible instanceof Array && this.visible.length === 3) {
+        this.selects.d.value = this.visible[0] ? null : 1;
+        this.selects.m.value = this.visible[1] ? null : 0;
+        this.selects.y.value = this.visible[2] ? null : new Date().getFullYear();
+      }
 
       if (this.placeHolders) {
         this.placeHolders[0].disabled = false;
