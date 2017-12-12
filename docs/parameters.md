@@ -10,7 +10,7 @@
 | attrsDate      | object     | | An object with the attributes (such as class or style) to add to the select element for the date.
 | attrsMonth      | object     | | An object with the attributes (such as class or style) to add to the select element for the date.
 | attrsYear      | object     | | An object with the attributes (such as class or style) to add to the select element for the date.
-| yearOrder        | string     | 'ascending'         | Sorting of years ("ascending" or "descending")
+| yearOrder        | string     | 'asc'         | Sorting of years ("asc" or "desc")
 | timezone        | number     | | A number indicating the timezone to be used when converting a string or an integer to a date. By default the timezone of the client is used.
 | placeholder        | string     | | Placeholders for the year, month and date combo boxes (in that order), separated by comma.
 | disabled        | boolean &#124; boolean[] | false | A single boolean value indicating if combo boxes should be disabled or an array of boolean values indicating a disabled state for each of the three combo boxes
