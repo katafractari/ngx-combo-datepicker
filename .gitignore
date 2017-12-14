@@ -42,4 +42,5 @@ testem.log
 Thumbs.db
 
 # Gitbook
-/_book
+/_book/
+/docs/_book/
