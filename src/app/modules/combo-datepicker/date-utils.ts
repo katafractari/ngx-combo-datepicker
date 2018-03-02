@@ -15,7 +15,7 @@ export default class DateUtils {
         res = 30;
       }
       if (year !== null && month === 2) {
-        res = ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0) ? 29 : 28;
+        res = ((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0) ? 29 : 28;
       }
     }
     return res;
