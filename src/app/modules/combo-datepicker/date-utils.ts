@@ -5,7 +5,7 @@ export default class DateUtils {
   }
 
   static parseIntStrict(num) {
-    return (num !== null && num !== '' && isNaN(parseInt(num, 10))) ? parseInt(num, 10) : null;
+    return (num !== null && num !== '' && !isNaN(parseInt(num, 10))) ? parseInt(num, 10) : null;
   }
 
   static getMaxDate(month, year) {
@@ -15,7 +15,7 @@ export default class DateUtils {
         res = 30;
       }
       if (year !== null && month === 2) {
-        res = year % 4 === 0 && year % 100 !== 0 ? 29 : 28;
+        res = ((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0) ? 29 : 28;
       }
     }
     return res;
