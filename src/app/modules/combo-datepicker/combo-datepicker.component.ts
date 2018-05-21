@@ -180,7 +180,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     // Hide or show days and months according to the min and max dates.
     this.updateMonthList(this.selects.y.value);
     this.updateYearList(this.selects.d.value);
-    this.updateDateList(this.selects.d.value, this.selects.y.value);
+    this.updateDateList(this.selects.m.value, this.selects.y.value);
 
     this.propagateChange(res);
   }
