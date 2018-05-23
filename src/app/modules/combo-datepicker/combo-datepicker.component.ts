@@ -159,9 +159,13 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
         seconds = this.ngModel.getSeconds();
         milliseconds = this.ngModel.getMilliseconds();
       }
-
+      // Remove already selected day & date if day is  greater than maxday then form invalid value also resets
+      if (this.selects.d.value > maxDay) {
+        this.selects.d.value = null;
+      } else {
       res = new Date(this.selects.y.value, this.selects.m.value,
         this.selects.d.value > maxDay ? maxDay : this.selects.d.value, hours, minutes, seconds, milliseconds);
+      }
     }
 
     // Disable placeholders after selecting a value.
@@ -179,7 +183,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
 
     // Hide or show days and months according to the min and max dates.
     this.updateMonthList(this.selects.y.value);
-    this.updateYearList(this.selects.d.value);
+    this.updateYearList(this.selects.m.value);
     this.updateDateList(this.selects.m.value, this.selects.y.value);
 
     this.propagateChange(res);
@@ -231,8 +235,8 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     if (changes.placeholder && !changes.placeholder.isFirstChange()) {
       this.updatePlaceholders();
       this.updateMonthList(this.selects.y.value);
-      this.updateYearList(this.selects.d.value);
-      this.updateDateList(this.selects.d.value, this.selects.y.value);
+      this.updateYearList(this.selects.m.value);
+      this.updateDateList(this.selects.m.value, this.selects.y.value);
     }
   }
 
