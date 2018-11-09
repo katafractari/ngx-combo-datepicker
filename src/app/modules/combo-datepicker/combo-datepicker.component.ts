@@ -147,7 +147,7 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
     // Check that the three combo boxes have values.
     if (this.selects.d.value && !isNaN(this.selects.m.value) &&
       this.selects.y.value != null && this.selects.y.value) {
-      const maxDay = DateUtils.getMaxDate(this.selects.m.value + 1, this.selects.m.value);
+      const maxDay = DateUtils.getMaxDate(this.selects.m.value + 1, this.selects.y.value);
 
       let hours = 0;
       let minutes = 0;
