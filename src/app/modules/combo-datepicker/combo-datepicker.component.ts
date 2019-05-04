@@ -162,8 +162,8 @@ export class ComboDatepickerComponent implements OnInit, OnChanges, ControlValue
       // Remove already selected day & date if day is  greater than maxday then form invalid value also resets
       if (this.selects.d.value > maxDay) {
         this.selects.d.value = null;
-      }else if (this.selects.m.value == null){}
-      else {
+      } else if (this.selects.m.value == null) {
+      } else {
       res = new Date(this.selects.y.value, this.selects.m.value,
         this.selects.d.value > maxDay ? maxDay : this.selects.d.value, hours, minutes, seconds, milliseconds);
       }
